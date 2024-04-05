@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from './modules/user/user.module';
+import { UsersModule } from './modules/user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import AppConfig from './config/app.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSourceOptions } from 'typeorm';
-import { AuthModule } from './src/modules/auth/auth.module';
 import { AuthModule } from './modules/auth/auth.module';
+// import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
@@ -20,7 +20,8 @@ import { AuthModule } from './modules/auth/auth.module';
       },
       inject: [ConfigService],
     }),
-    UserModule,
+    // PassportModule.register({ defaultStrategy: 'jwt' }),
+    UsersModule,
     AuthModule,
   ],
   controllers: [],

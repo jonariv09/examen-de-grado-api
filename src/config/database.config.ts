@@ -1,3 +1,7 @@
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
 const DatabaseConfig = () => ({
   type: 'postgres',
   host: process.env.DB_HOST || 'localhost',
@@ -5,13 +9,15 @@ const DatabaseConfig = () => ({
   database: process.env.DB_NAME || '',
   username: process.env.DB_USER || '',
   password: process.env.DB_PASSWORD || '',
-  entities: ['src/**/*.entity{.ts,.js}'],
+  entities: ['dist/**/*.entity{.ts,.js}'],
   synchronize: process.env.DB_SYNCHRONIZE || false,
   migrationsTableName: 'migrations',
-  migrations: ['src/migrations/*{.ts,.js}'],
+  migrations: ['dist/migrations/*{.ts,.js}'],
   cli: {
     migrationsDir: 'src/migrations',
   },
 });
+
+console.log(DatabaseConfig());
 
 export default DatabaseConfig;
