@@ -18,6 +18,4 @@ const DatabaseConfig = () => ({
   },
 });
 
-console.log(DatabaseConfig());
-
 export default DatabaseConfig;
