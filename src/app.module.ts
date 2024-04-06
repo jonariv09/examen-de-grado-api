@@ -5,12 +5,14 @@ import AppConfig from './config/app.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSourceOptions } from 'typeorm';
 import { AuthModule } from './modules/auth/auth.module';
-// import { PassportModule } from '@nestjs/passport';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtGuard } from './guards/jwt.guard';
+import { JwtStrategy } from './modules/auth/strategy/jwt.strategy';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: false,
+      isGlobal: true,
       load: [AppConfig],
     }),
     TypeOrmModule.forRootAsync({
@@ -20,11 +22,16 @@ import { AuthModule } from './modules/auth/auth.module';
       },
       inject: [ConfigService],
     }),
-    // PassportModule.register({ defaultStrategy: 'jwt' }),
     UsersModule,
     AuthModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtGuard,
+    },
+    JwtStrategy,
+  ],
 })
 export class AppModule {}

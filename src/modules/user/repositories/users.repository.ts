@@ -31,6 +31,12 @@ export class UsersRepository extends Repository<User> {
     });
   }
 
+  async findOneByEmail(email): Promise<User> {
+    return this.userRepository.findOneBy({
+      email: email,
+    });
+  }
+
   async store(user: CreateUserDto): Promise<User> {
     const newUser = this.userRepository.create(user);
     return this.userRepository.save(newUser);

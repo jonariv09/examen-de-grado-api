@@ -3,20 +3,28 @@ import { AuthService } from './services/auth.service';
 import { AuthController } from './controllers/auth.controller';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './jwt.strategy';
+import { JwtStrategy } from './strategy/jwt.strategy';
 import { UsersModule } from '../user/user.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret: 'secret',
-      signOptions: { expiresIn: '60s' },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        signOptions: {
+          expiresIn: parseInt(
+            configService.getOrThrow('ACCESS_TOKEN_VALIDITY_DURATION_IN_SEC'),
+          ),
+        },
+      }),
+      inject: [ConfigService],
     }),
     UsersModule,
   ],
-  providers: [AuthService, JwtStrategy, JwtService],
   controllers: [AuthController],
+  providers: [AuthService, JwtStrategy, JwtService],
   exports: [JwtModule, PassportModule],
 })
 export class AuthModule {}

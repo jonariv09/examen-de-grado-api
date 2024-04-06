@@ -1,5 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/modules/user/entities/user.entity';
 import { UsersService } from 'src/modules/user/services/users.service';
 
 @Injectable()
@@ -7,26 +9,27 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
-  async validateUserCredentials(
-    username: string,
-    password: string,
-  ): Promise<any> {
-    const user = await this.usersService.findOneByUsername(username);
+  async validateUser(email: string): Promise<any> {
+    const user: User = await this.usersService.findOneByUsername(email);
 
-    if (user && user.password === password) {
-      const { password, ...result } = user;
-      return result;
+    if (!user) {
+      throw new BadRequestException('User not found');
     }
-    return null;
+
+    // TODO: need to apply unencrypt password passed from params
+
+    return user;
   }
 
-  async loginWithCredentials(user: any) {
-    const payload = { username: user.username, sub: user.userId };
-
+  async login({ email }) {
+    const payload = { email: email };
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(payload, {
+        secret: this.configService.get<string>('JWT_SECRET'),
+      }),
     };
   }
 }
