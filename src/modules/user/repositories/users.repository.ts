@@ -19,7 +19,7 @@ export class UsersRepository extends Repository<User> {
     return this.userRepository.find();
   }
 
-  async findById(id: number) {
+  async findById(id: string) {
     return this.userRepository.findOneBy({
       id: id,
     });
